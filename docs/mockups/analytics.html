@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | Lumina AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf',
+                            500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a', 950: '#042f2e',
+                        },
+                        surface: {
+                            50: '#fdfbf7', 100: '#f6f3eb', 200: '#e8e2d2', 300: '#d7cbb3', 800: '#2c2a26', 900: '#1a1917',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
+                    boxShadow: { 'soft': '0 10px 40px -10px rgba(4,47,46,0.08)', 'float': '0 20px 40px -10px rgba(20,184,166,0.15)' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #1a1917;
+        }
+
+        .pattern-dots {
+            background-image: radial-gradient(#d7cbb3 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Simple bar chart specific styles for mockup purposes */
+        .bar-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 160px;
+            padding-top: 20px;
+            border-bottom: 1px solid #e8e2d2;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .bar:hover::after {
+            content: attr(data-val);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1917;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen pattern-dots flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass border-r border-surface-200 flex flex-col justify-between fixed h-full z-10">
+        <div>
+            <div class="p-8">
+                <a href="#" class="text-2xl font-serif font-medium tracking-tight text-surface-900">
+                    Lumina<span class="text-brand-500 italic">.ai</span>
+                </a>
+            </div>
+            <nav class="px-4 space-y-2">
+                <a href="dashboard.html"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="library.html"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                        </path>
+                    </svg>
+                    Library
+                </a>
+                <a href="tutor.html"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                        </path>
+                    </svg>
+                    AI Tutor
+                </a>
+                <a href="analytics.html"
+                    class="flex items-center gap-3 px-4 py-3 bg-brand-50 text-brand-700 rounded-2xl font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Analytics
+                </a>
+            </nav>
+        </div>
+        <div class="p-6 border-t border-surface-200">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-surface-200 flex items-center justify-center font-serif text-surface-900">
+                    S</div>
+                <div>
+                    <h5 class="text-sm font-medium text-surface-900">Student Name</h5>
+                    <a href="settings.html" class="text-xs text-surface-800 hover:text-brand-600">Settings & Profile</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 flex-1 p-10 max-w-6xl mx-auto space-y-8">
+
+        <header class="flex justify-between items-end mb-8">
+            <div>
+                <span class="text-xs uppercase tracking-widest text-surface-800 font-medium mb-1 block">Mastery
+                    Tracking</span>
+                <h1 class="text-4xl font-serif text-surface-900 leading-none">Your Progress</h1>
+            </div>
+
+            <div class="flex gap-4">
+                <select
+                    class="bg-surface-50 border border-surface-200 text-surface-900 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300">
+                    <option>All Courses</option>
+                    <option>Advanced Calculus</option>
+                    <option>Physics 101</option>
+                </select>
+                <select
+                    class="bg-surface-50 border border-surface-200 text-surface-900 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300">
+                    <option>Last 30 Days</option>
+                    <option>This Semester</option>
+                    <option>All Time</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- KPI Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass p-6 rounded-3xl shadow-soft">
+                <p class="text-sm text-surface-800 font-medium mb-2">Overall Mastery</p>
+                <div class="flex items-end gap-3">
+                    <h4 class="text-4xl font-serif text-surface-900">76%</h4>
+                    <span class="text-sm font-medium text-green-600 mb-1 flex items-center"><svg class="w-4 h-4 mr-0.5"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg> +4%</span>
+                </div>
+            </div>
+            <div class="glass p-6 rounded-3xl shadow-soft">
+                <p class="text-sm text-surface-800 font-medium mb-2">Questions Asked</p>
+                <h4 class="text-4xl font-serif text-surface-900">142</h4>
+            </div>
+            <div class="glass p-6 rounded-3xl shadow-soft">
+                <p class="text-sm text-surface-800 font-medium mb-2">Study Time (AI Context)</p>
+                <h4 class="text-4xl font-serif text-surface-900">14<span
+                        class="text-lg text-surface-500 font-sans ml-1">hrs</span> 20<span
+                        class="text-lg text-surface-500 font-sans ml-1">mins</span></h4>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- Mastery Chart -->
+            <div class="glass p-8 rounded-3xl shadow-soft border-t border-white/60 flex flex-col items-center">
+                <div class="w-full flex justify-between items-center mb-8">
+                    <h3 class="text-lg font-serif text-surface-900">Topic Acquisition Rate</h3>
+                    <button class="p-1.5 text-surface-500 hover:text-surface-900 rounded bg-surface-100"><svg
+                            class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg></button>
+                </div>
+
+                <!-- Pure CSS Mock Chart for demo purposes -->
+                <div class="w-full bar-container">
+                    <div class="bar-group">
+                        <div class="bar bg-surface-300" style="height: 20%;" data-val="Oct 1"></div><span
+                            class="text-xs text-surface-500">W1</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar bg-surface-300" style="height: 35%;" data-val="Oct 8"></div><span
+                            class="text-xs text-surface-500">W2</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar bg-brand-300" style="height: 45%;" data-val="Oct 15"></div><span
+                            class="text-xs text-surface-500">W3</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar bg-brand-400" style="height: 60%;" data-val="Oct 22"></div><span
+                            class="text-xs text-surface-800 font-medium">W4</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar bg-brand-500 shadow-float" style="height: 85%;" data-val="Oct 29"></div><span
+                            class="text-xs text-brand-700 font-medium">W5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Focus Areas -->
+            <div class="glass p-8 rounded-3xl shadow-soft flex flex-col">
+                <h3 class="text-lg font-serif text-surface-900 mb-6">Current Concept Focus</h3>
+
+                <div class="space-y-6 flex-1">
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-surface-900">Derivatives (Calculus)</span>
+                            <span class="text-xs font-semibold text-brand-700">92%</span>
+                        </div>
+                        <div class="w-full bg-surface-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-brand-500 h-full w-[92%] rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-surface-900">Kinematics (Physics)</span>
+                            <span class="text-xs font-semibold text-brand-600">75%</span>
+                        </div>
+                        <div class="w-full bg-surface-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-brand-400 h-full w-[75%] rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm font-medium text-surface-900 flex items-center gap-2">
+                                Limits at Infinity
+                                <span
+                                    class="bg-surface-200 text-surface-600 text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wide">Needs
+                                    Review</span>
+                            </span>
+                            <span class="text-xs font-semibold text-surface-600">40%</span>
+                        </div>
+                        <div class="w-full bg-surface-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-surface-400 h-full w-[40%] rounded-full"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button
+                    class="w-full bg-surface-50 border border-surface-200 text-surface-900 px-4 py-3 rounded-2xl font-medium hover:bg-surface-100 transition-colors mt-6 text-sm">
+                    Generate Study Plan
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>

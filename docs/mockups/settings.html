@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Lumina AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf',
+                            500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a', 950: '#042f2e',
+                        },
+                        surface: {
+                            50: '#fdfbf7', 100: '#f6f3eb', 200: '#e8e2d2', 300: '#d7cbb3', 800: '#2c2a26', 900: '#1a1917',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
+                    boxShadow: { 'soft': '0 10px 40px -10px rgba(4,47,46,0.08)', 'float': '0 20px 40px -10px rgba(20,184,166,0.15)' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #1a1917;
+        }
+
+        .pattern-dots {
+            background-image: radial-gradient(#d7cbb3 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen pattern-dots flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass border-r border-surface-200 flex flex-col justify-between fixed h-full z-10">
+        <div>
+            <div class="p-8">
+                <a href="#" class="text-2xl font-serif font-medium tracking-tight text-surface-900">
+                    Lumina<span class="text-brand-500 italic">.ai</span>
+                </a>
+            </div>
+            <nav class="px-4 space-y-2">
+                <a href="dashboard.html"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="library.html"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                        </path>
+                    </svg>
+                    Library
+                </a>
+                <a href="tutor.html"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                        </path>
+                    </svg>
+                    AI Tutor
+                </a>
+                <a href="analytics.html"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Analytics
+                </a>
+            </nav>
+        </div>
+        <div class="p-6 border-t border-surface-200 bg-brand-50 rounded-tr-3xl">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-brand-200 flex items-center justify-center font-serif text-brand-900">
+                    S</div>
+                <div>
+                    <h5 class="text-sm font-medium text-brand-900">Student Name</h5>
+                    <span class="text-xs text-brand-700 font-semibold">Settings & Profile</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 flex-1 p-10 max-w-4xl mx-auto space-y-12">
+
+        <header>
+            <span class="text-xs uppercase tracking-widest text-surface-800 font-medium mb-1 block">Account</span>
+            <h1 class="text-4xl font-serif text-surface-900 leading-none">Settings & Profile</h1>
+        </header>
+
+        <div class="space-y-10">
+
+            <!-- Profile Section -->
+            <section class="glass p-8 rounded-3xl shadow-soft">
+                <h3 class="text-lg font-serif text-surface-900 border-b border-surface-200 pb-4 mb-6">Personal
+                    Information</h3>
+
+                <div class="flex items-center gap-8 mb-8">
+                    <div class="relative">
+                        <div
+                            class="w-24 h-24 rounded-full bg-surface-200 flex items-center justify-center font-serif text-4xl text-surface-900 border-4 border-white shadow-sm">
+                            S
+                        </div>
+                        <button
+                            class="absolute bottom-0 right-0 p-2 bg-brand-900 text-surface-50 rounded-full hover:bg-brand-800 transition-colors shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 10V4h6l12 12-6 6L3 10z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 6l2 2">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-medium text-surface-900 mb-1">Student Name</h4>
+                        <p class="text-surface-800 font-light text-sm mb-3">student@university.edu</p>
+                        <span class="text-xs font-medium text-brand-800 bg-brand-100 px-3 py-1 rounded-full">Pro
+                            Plan</span>
+                    </div>
+                </div>
+
+                <form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-1">
+                        <label class="text-xs font-medium text-surface-800 ml-1 block">Full Name</label>
+                        <input type="text" value="Student Name"
+                            class="w-full bg-surface-50 border border-surface-200 text-surface-900 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-300 transition-all font-light">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-medium text-surface-800 ml-1 block">Email Address</label>
+                        <input type="email" value="student@university.edu"
+                            class="w-full bg-surface-50 border border-surface-200 text-surface-900 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-300 transition-all font-light"
+                            disabled>
+                        <p class="text-[10px] text-surface-500 ml-2 mt-1">Contact support to change email.</p>
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2 space-y-1 mt-2">
+                        <label class="text-xs font-medium text-surface-800 ml-1 block">Bio / Major Focus</label>
+                        <textarea rows="3"
+                            class="w-full bg-surface-50 border border-surface-200 text-surface-900 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-300 transition-all font-light resize-none">Mathematics major focusing on advanced calculus and statistics.</textarea>
+                    </div>
+
+                    <div class="col-span-1 md:col-span-2 flex justify-end mt-4">
+                        <button type="button"
+                            class="bg-brand-900 text-surface-50 px-6 py-3 rounded-2xl font-medium shadow-float hover:bg-brand-800 transition-colors">Save
+                            Changes</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Preferences & Danger Zone -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- Preferences -->
+                <section class="glass p-8 rounded-3xl shadow-soft h-full">
+                    <h3 class="text-lg font-serif text-surface-900 border-b border-surface-200 pb-4 mb-6">AI Preferences
+                    </h3>
+
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="text-sm font-medium text-surface-900">Socratic Method</h5>
+                                <p class="text-xs text-surface-800 font-light mt-0.5">AI asks leading questions instead
+                                    of giving direct answers.</p>
+                            </div>
+                            <!-- Mock Toggle -->
+                            <div class="w-12 h-6 bg-brand-500 rounded-full relative cursor-pointer shadow-inner">
+                                <div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1 shadow-sm"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="text-sm font-medium text-surface-900">Strict Curriculum Mode</h5>
+                                <p class="text-xs text-surface-800 font-light mt-0.5">AI will aggressively refuse to
+                                    answer non-uploaded topics.</p>
+                            </div>
+                            <!-- Mock Toggle -->
+                            <div class="w-12 h-6 bg-brand-500 rounded-full relative cursor-pointer shadow-inner">
+                                <div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1 shadow-sm"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="text-sm font-medium text-surface-900">Email Summaries</h5>
+                                <p class="text-xs text-surface-800 font-light mt-0.5">Receive weekly progress reports.
+                                </p>
+                            </div>
+                            <!-- Mock Toggle Off -->
+                            <div class="w-12 h-6 bg-surface-300 rounded-full relative cursor-pointer shadow-inner">
+                                <div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1 shadow-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Danger Zone -->
+                <section
+                    class="border border-red-200 bg-red-50/30 p-8 rounded-3xl h-full flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-serif text-red-900 border-b border-red-200 pb-4 mb-6">Danger Zone</h3>
+                        <p class="text-sm text-red-800 font-light mb-4">Deleting your account will permanently wipe all
+                            uploaded documents, chat histories, and mastery tracking. This action cannot be undone.</p>
+                    </div>
+                    <div>
+                        <button
+                            class="bg-red-500 text-white px-6 py-3 rounded-2xl font-medium shadow-sm hover:bg-red-600 transition-colors w-full">Delete
+                            Account Data</button>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Lumina AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa', 100: '#ccfbf1', 200: '#99f6e4', 300: '#5eead4', 400: '#2dd4bf',
+                            500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 800: '#115e59', 900: '#134e4a', 950: '#042f2e',
+                        },
+                        surface: {
+                            50: '#fdfbf7', 100: '#f6f3eb', 200: '#e8e2d2', 300: '#d7cbb3', 800: '#2c2a26', 900: '#1a1917',
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] },
+                    boxShadow: { 'soft': '0 10px 40px -10px rgba(4,47,46,0.08)', 'float': '0 20px 40px -10px rgba(20,184,166,0.15)' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #1a1917;
+        }
+
+        .pattern-dots {
+            background-image: radial-gradient(#d7cbb3 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen pattern-dots flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass border-r border-surface-200 flex flex-col justify-between fixed h-full z-10">
+        <div>
+            <!-- Logo -->
+            <div class="p-8">
+                <a href="#" class="text-2xl font-serif font-medium tracking-tight text-surface-900">
+                    Lumina<span class="text-brand-500 italic">.ai</span>
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="px-4 space-y-2">
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 bg-brand-50 text-brand-700 rounded-2xl font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                        </path>
+                    </svg>
+                    Library
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                        </path>
+                    </svg>
+                    AI Tutor
+                </a>
+                <a href="#"
+                    class="flex items-center gap-3 px-4 py-3 text-surface-800 hover:bg-surface-100 hover:text-surface-900 rounded-2xl transition-colors font-light">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                    Analytics
+                </a>
+            </nav>
+        </div>
+
+        <!-- User Section -->
+        <div class="p-6 border-t border-surface-200">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-surface-200 flex items-center justify-center font-serif text-surface-900">
+                    S
+                </div>
+                <div>
+                    <h5 class="text-sm font-medium text-surface-900">Student Name</h5>
+                    <a href="#" class="text-xs text-surface-800 hover:text-brand-600">Settings & Profile</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-64 flex-1 p-10 max-w-6xl mx-auto">
+
+        <!-- Top Bar -->
+        <header class="flex justify-between items-end mb-12">
+            <div>
+                <span class="text-xs uppercase tracking-widest text-surface-800 font-medium mb-1 block">Good
+                    Morning,</span>
+                <h1 class="text-4xl font-serif text-surface-900 leading-none">Your Learning Hub</h1>
+            </div>
+            <button
+                class="bg-brand-900 text-surface-50 px-6 py-3 rounded-2xl font-medium shadow-float hover:bg-brand-800 transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Upload Materials
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Focus & Stats -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Resume Learning Banner -->
+                <div
+                    class="glass p-8 rounded-3xl shadow-soft relative overflow-hidden flex items-center justify-between border-t border-white/60">
+                    <div class="absolute -right-16 -top-16 opacity-10">
+                        <svg class="w-64 h-64 text-brand-900" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                            <path
+                                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                        </svg>
+                    </div>
+
+                    <div class="z-10 w-full flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <span
+                                class="text-xs uppercase tracking-widest text-brand-700 font-semibold mb-2 block">Resume
+                                Study</span>
+                            <h2 class="text-2xl font-serif text-surface-900 mb-1">Advanced Calculus: Limits</h2>
+                            <p class="text-sm text-surface-800 font-light">You left off at finding horizontal
+                                asymptotes.</p>
+                        </div>
+                        <button
+                            class="bg-surface-900 text-surface-50 px-6 py-3 rounded-2xl font-medium shrink-0 hover:bg-surface-800 transition-colors flex items-center gap-2">
+                            Return to Tutor
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass p-6 rounded-3xl shadow-soft">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="p-2 bg-brand-50 text-brand-600 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-surface-800 font-medium">Topics Mastered</span>
+                        </div>
+                        <h4 class="text-3xl font-serif text-surface-900">14<span
+                                class="text-lg text-surface-400 font-sans ml-1">/ 20</span></h4>
+                        <div class="w-full bg-surface-200 h-1.5 rounded-full mt-4 overflow-hidden">
+                            <div class="bg-brand-500 h-full w-[70%] rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl shadow-soft">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="p-2 bg-purple-50 text-purple-600 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                    </path>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-surface-800 font-medium">Files Indexed</span>
+                        </div>
+                        <h4 class="text-3xl font-serif text-surface-900">8</h4>
+                        <p class="text-xs text-surface-800 mt-4 font-light">Based on 3 courses.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: Recent Activity & Uploads -->
+            <div class="space-y-8">
+
+                <div class="glass p-6 rounded-3xl shadow-soft h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-serif text-surface-900">Recent Materials</h3>
+                        <a href="#"
+                            class="text-xs font-semibold uppercase tracking-wide text-brand-600 hover:text-brand-800">View
+                            All</a>
+                    </div>
+
+                    <div class="space-y-4 flex-1">
+                        <!-- File Item -->
+                        <div
+                            class="group flex items-center justify-between p-3 hover:bg-surface-50 rounded-2xl transition-colors cursor-pointer border border-transparent hover:border-surface-200">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-surface-900 truncate w-32">Ch2_Limits.pdf</p>
+                                    <p class="text-xs text-surface-800 font-light">Processed 2h ago</p>
+                                </div>
+                            </div>
+                            <span
+                                class="text-xs font-medium text-brand-700 bg-brand-50 px-2 py-1 rounded-md">Ready</span>
+                        </div>
+
+                        <!-- File Item -->
+                        <div
+                            class="group flex items-center justify-between p-3 hover:bg-surface-50 rounded-2xl transition-colors cursor-pointer border border-transparent hover:border-surface-200">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-surface-900 truncate w-32">
+                                        Lecture_Notes_Week3.docx</p>
+                                    <p class="text-xs text-surface-800 font-light">Processing...</p>
+                                </div>
+                            </div>
+                            <span
+                                class="text-xs font-medium text-surface-500 bg-surface-100 flex gap-1 items-center px-2 py-1 rounded-md">
+                                <span class="w-1.5 h-1.5 bg-brand-400 rounded-full animate-pulse"></span>
+                                Indexing
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Mini Drag & Drop -->
+                    <div
+                        class="mt-4 border-2 border-dashed border-surface-300 rounded-2xl p-6 text-center hover:border-brand-400 hover:bg-brand-50/50 transition-colors cursor-pointer">
+                        <svg class="w-6 h-6 mx-auto text-surface-800 mb-2" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        <span class="text-xs font-medium text-surface-800 block">Quick Upload</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

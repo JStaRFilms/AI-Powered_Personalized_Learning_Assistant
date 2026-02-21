@@ -1,39 +1,89 @@
-## 🔧 Agent Setup (DO THIS FIRST)
+# Task: Material Uploads (FR-003)
 
-### Workflow to Follow
-> Load: `cat .agent/workflows/vibe-build.md`
-
-### Prime Agent Context
-> MANDATORY: Run `/vibe-primeAgent` first
-
-### Required Skills
-> | Skill | Path | Why |
-> |-------|------|-----|
-> | nextjs-standards | `~/.gemini/antigravity/skills/nextjs-standards/SKILL.md` | Handling Node-compatible packages in server actions |
-
-### Check Additional Skills
-> Scan all known skills directories for more relevant skills
+**Session ID:** `orch-20260220-233751`
+**Source:** Orchestrator
+**Context:** Initial build phase for AI-Powered Personalized Learning Assistant MVP
+**Priority:** P1 (High - Core Feature)
+**Dependencies:** `01-scaffold-db.task.md`, `02-better-auth.task.md`, `03-dashboard-ui.task.md` (Must complete first)
+**Created At:** 2026-02-20T23:37:51Z
 
 ---
 
-## Objective
-Build the document upload flow, allowing students to submit their materials to the internal database for processing. 
+## 🔧 Agent Setup (DO THIS FIRST)
 
-## Scope
-- Construct a dedicated UI specifically for uploading documents (`.txt`, `.pdf`).
-- Implement the Next.js Server Action that receives and validates the `FormData`.
-- For PDF processing, integrate a compatible library (`pdf-parse` or similar) to extract raw text seamlessly within the Node runtime.
-- Save the `Document` metadata and associated text to the Prisma database.
+### 1. Prime Agent Context
+> **MANDATORY:** Run `/vibe-primeAgent` first to load project Coding Guidelines from `docs/Coding_Guidelines.md`
 
-## Context
+### 2. Workflow to Follow
+> **Load:** `cat .agent/workflows/vibe-build.md`
+> 
+> This is the core implementation workflow. Follow its verification gates.
+
+### 3. Required Skills
+| Skill | Path | Why Required |
+|-------|------|--------------|
+| `nextjs-standards` | `~/.kilocode/skills/nextjs-standards/SKILL.md` | Server Actions, FormData handling, Node runtime patterns |
+| `ui-ux-pro-max` | `~/.kilocode/skills/ui-ux-pro-max/SKILL.md` | Form styling, file upload UI patterns |
+
+### 4. Reference Documents
+| Document | Path | Purpose |
+|----------|------|---------|
+| FR-003 | `docs/issues/FR-003.md` | Upload requirements |
+| Core Architecture | `docs/features/CoreArchitecture.md` | Document model structure |
+| Coding Guidelines | `docs/Coding_Guidelines.md` | Project standards |
+| Library Mockup | `docs/mockups/library.html` | Visual reference for upload UI |
+
+---
+
+## 📋 Objective
+Build the document upload flow, allowing students to submit their materials to the internal database for processing.
+
+## 🎯 Scope
+
+**In Scope:**
+- Construct dedicated UI for uploading documents (`.txt`, `.pdf`)
+- Implement Next.js Server Action that receives and validates `FormData`
+- Integrate PDF parsing library (`pdf-parse` or similar) to extract raw text within Node runtime
+- Save `Document` metadata and associated text to Prisma database
+- File size validation (max 10MB)
+- File type validation (only `.txt`, `.pdf`)
+- User association with uploaded documents
+
+**Out of Scope:**
+- Vector embedding (Task 05)
+- Document preview/rendering
+- Document deletion (future enhancement)
+- Multi-file batch upload (future enhancement)
+
+## 📚 Context
 See FR-003 in `docs/issues/FR-003.md`. This task focuses simply on the ingest point. The uploaded raw text will be handed off to the RAG pipeline later. It is vital to ensure proper file size and type validation at this step to prevent downstream crashes.
 
-## Definition of Done
-- [ ] Upload UI form is built and visually aligned with the design system.
-- [ ] A Server Action cleanly receives the file.
-- [ ] Raw text is extracted from a `.pdf` file.
-- [ ] The Prisma `Document` record is successfully created in the Postgres database.
+---
 
-## Expected Artifacts
-- `components/FileUploader.tsx` (or similar)
-- `app/actions/uploadMaterial.ts`
+## ✅ Definition of Done
+- [ ] Upload UI form is built and visually aligned with design system
+- [ ] Server Action cleanly receives the file
+- [ ] Raw text is extracted from `.pdf` file successfully
+- [ ] Raw text is extracted from `.txt` file successfully
+- [ ] Prisma `Document` record is successfully created in Postgres database
+- [ ] File validation rejects invalid types and oversized files
+- [ ] Uploaded documents are associated with the authenticated user
+
+## 📁 Expected Artifacts
+| File | Purpose |
+|------|---------|
+| `app/library/page.tsx` | Library/upload page |
+| `components/FileUploader.tsx` | File upload component |
+| `app/actions/uploadMaterial.ts` | Server Action for file handling |
+| `lib/pdf-parser.ts` | PDF text extraction utility |
+
+## 🚫 Constraints
+- ONLY perform the work outlined above
+- Do NOT implement vector embedding (that's Task 05)
+- Do NOT deviate from the specified scope
+- Signal completion using `attempt_completion` tool
+- Create `04-material-uploads.result.md` file in `docs/tasks/orchestrator-sessions/orch-20260220-233751/completed/` when complete
+
+---
+
+*Generated by vibe-orchestrator mode*

@@ -1,41 +1,95 @@
-## 🔧 Agent Setup (DO THIS FIRST)
+# Task: AI Chat Engine (FR-005)
 
-### Workflow to Follow
-> Load: `cat .agent/workflows/vibe-build.md`
-
-### Prime Agent Context
-> MANDATORY: Run `/vibe-primeAgent` first
-
-### Required Skills
-> | Skill | Path | Why |
-> |-------|------|-----|
-> | ai-sdk | `~/.gemini/antigravity/skills/ai-sdk/SKILL.md` | Core implementation details for `useChat` and streaming |
-> | ui-ux-pro-max | `~/.gemini/antigravity/skills/ui-ux-pro-max/SKILL.md` | Ensures the responsive ChatGPT-like styling is premium |
-
-### Check Additional Skills
-> Scan all known skills directories for more relevant skills
+**Session ID:** `orch-20260220-233751`
+**Source:** Orchestrator
+**Context:** Initial build phase for AI-Powered Personalized Learning Assistant MVP
+**Priority:** P0 (Critical - Core AI Feature)
+**Dependencies:** `01-scaffold-db.task.md`, `02-better-auth.task.md`, `05-rag-pipeline.task.md` (Must complete first)
+**Created At:** 2026-02-20T23:37:51Z
 
 ---
 
-## Objective
+## 🔧 Agent Setup (DO THIS FIRST)
+
+### 1. Prime Agent Context
+> **MANDATORY:** Run `/vibe-primeAgent` first to load project Coding Guidelines from `docs/Coding_Guidelines.md`
+
+### 2. Workflow to Follow
+> **Load:** `cat .agent/workflows/vibe-build.md`
+> 
+> This is the core implementation workflow. Follow its verification gates.
+
+### 3. Required Skills
+| Skill | Path | Why Required |
+|-------|------|--------------|
+| `ai-sdk` | `~/.kilocode/skills/ai-sdk/SKILL.md` | `useChat` hook, streaming, OpenRouter integration, route handlers |
+| `ui-ux-pro-max` | `~/.kilocode/skills/ui-ux-pro-max/SKILL.md` | ChatGPT-like UI styling, responsive chat interface |
+| `nextjs-standards` | `~/.kilocode/skills/nextjs-standards/SKILL.md` | API routes, Server Actions |
+
+### 4. Reference Documents
+| Document | Path | Purpose |
+|----------|------|---------|
+| FR-005 | `docs/issues/FR-005.md` | Chat requirements |
+| Core Architecture | `docs/features/CoreArchitecture.md` | Conversation model, message structure |
+| Coding Guidelines | `docs/Coding_Guidelines.md` | Project standards |
+| Tutor Mockup | `docs/mockups/tutor.html` | Visual reference for chat UI |
+
+---
+
+## 📋 Objective
 Implement the responsive AI Chat frontend interface and the core Next.js backend Route Handler orchestrating the semantic retrieval and OpenRouter LLM stream.
 
-## Scope
-- Create a `ChatInterface` client component with `useChat` (`@ai-sdk/react`).
-- Build `app/api/chat/route.ts` leveraging the Vercel AI SDK.
-- The route handler MUST extract the latest user message, query the Neon `pgvector` database (via `knowledge.service.ts` from FR-004), and dynamically construct the system prompt.
-- The system prompt defines the "Tutor Persona" to ensure it relies absolutely on the loaded curriculum context (no hallucinations).
-- Link the UI's messages specifically to the user session, saving conversations to the Prisma database.
+## 🎯 Scope
 
-## Context
+**In Scope:**
+- Create `ChatInterface` client component with `useChat` from `@ai-sdk/react`
+- Build `app/api/chat/route.ts` leveraging Vercel AI SDK
+- Route handler MUST extract latest user message, query Neon `pgvector` database (via `knowledge.service.ts` from FR-004), and dynamically construct system prompt
+- System prompt defines "Tutor Persona" ensuring it relies absolutely on loaded curriculum context (no hallucinations)
+- Link UI messages to user session, saving conversations to Prisma database
+- Configure OpenRouter provider (`@openrouter/ai-sdk-provider`)
+- Implement conversation history retrieval
+- Streaming responses to frontend
+
+**Out of Scope:**
+- Voice input/output
+- Multi-modal (image) support
+- Conversation sharing
+- Model selection UI (use default model)
+
+## 📚 Context
 See FR-005 in `docs/issues/FR-005.md`. The RAG backend must be operational prior to executing this completely. OpenRouter serves as the gateway to the LLM; the `@openrouter/ai-sdk-provider` must be configured correctly so the student has choice over which model effectively runs their localized tutor.
 
-## Definition of Done
-- [ ] Responsive `ChatInterface` operates beautifully on web/mobile.
-- [ ] Route handler streams AI text effectively back to the UI.
-- [ ] Responses are strictly grounded in user-provided materials via RAG context injection.
-- [ ] Past chat sessions for the active user are retrievable and stored in the PostgreSQL database.
+**Recommended Default Model:** `anthropic/claude-3-haiku` or `openai/gpt-4o-mini` via OpenRouter for cost efficiency.
 
-## Expected Artifacts
-- `components/ChatInterface.tsx`
-- `app/api/chat/route.ts`
+---
+
+## ✅ Definition of Done
+- [ ] Responsive `ChatInterface` operates beautifully on web/mobile
+- [ ] Route handler streams AI text effectively back to UI
+- [ ] Responses are strictly grounded in user-provided materials via RAG context injection
+- [ ] Past chat sessions for active user are retrievable and stored in PostgreSQL database
+- [ ] Conversation persistence works correctly
+- [ ] UI matches design system from `docs/mockups/tutor.html`
+
+## 📁 Expected Artifacts
+| File | Purpose |
+|------|---------|
+| `components/ChatInterface.tsx` | Main chat UI component |
+| `components/ChatMessage.tsx` | Individual message component |
+| `components/ChatInput.tsx` | Message input component |
+| `app/api/chat/route.ts` | API route handler with RAG |
+| `app/chat/page.tsx` | Chat page |
+| `lib/openrouter.ts` | OpenRouter provider configuration |
+| `lib/tutor-prompt.ts` | System prompt templates |
+
+## 🚫 Constraints
+- ONLY perform the work outlined above
+- Do NOT implement voice or image features
+- Do NOT deviate from the specified scope
+- Signal completion using `attempt_completion` tool
+- Create `06-chat-engine.result.md` file in `docs/tasks/orchestrator-sessions/orch-20260220-233751/completed/` when complete
+
+---
+
+*Generated by vibe-orchestrator mode*

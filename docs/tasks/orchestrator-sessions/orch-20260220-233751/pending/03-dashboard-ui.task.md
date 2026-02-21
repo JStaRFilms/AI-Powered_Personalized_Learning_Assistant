@@ -1,39 +1,88 @@
-## 🔧 Agent Setup (DO THIS FIRST)
+# Task: Dashboard UI (FR-002)
 
-### Workflow to Follow
-> Load: `cat .agent/workflows/vibe-build.md`
-
-### Prime Agent Context
-> MANDATORY: Run `/vibe-primeAgent` first
-
-### Required Skills
-> | Skill | Path | Why |
-> |-------|------|-----|
-> | ui-ux-pro-max | `~/.gemini/antigravity/skills/ui-ux-pro-max/SKILL.md` | Provides high-fidelity UI design patterns |
-
-### Check Additional Skills
-> Scan all known skills directories for more relevant skills
+**Session ID:** `orch-20260220-233751`
+**Source:** Orchestrator
+**Context:** Initial build phase for AI-Powered Personalized Learning Assistant MVP
+**Priority:** P1 (High - Core Feature)
+**Dependencies:** `01-scaffold-db.task.md`, `02-better-auth.task.md` (Must complete first)
+**Created At:** 2026-02-20T23:37:51Z
 
 ---
 
-## Objective
-Establish the foundational responsive Dashboard layout where a user can view their tracked progress and interact with features. 
+## 🔧 Agent Setup (DO THIS FIRST)
 
-## Scope
-- Create an overall application layout shell (header, sidebar/nav, main content area) for authenticated users.
-- Build the Dashboard overview page (`app/dashboard/page.tsx`).
-- Fetch the user session and display personalized information (e.g. name, simulated mastery metrics) using Prisma.
-- Implement clear call-to-action sections for uploading materials and accessing the chat UI.
+### 1. Prime Agent Context
+> **MANDATORY:** Run `/vibe-primeAgent` first to load project Coding Guidelines from `docs/Coding_Guidelines.md`
 
-## Context
-See FR-002 in `docs/issues/FR-002.md`. The design should prioritize visual excellence—do not settle for generic layout shells. It must feel premium and interactive while remaining fully responsive for web.
+### 2. Workflow to Follow
+> **Load:** `cat .agent/workflows/vibe-build.md`
+> 
+> This is the core implementation workflow. Follow its verification gates.
 
-## Definition of Done
-- [ ] Authenticated application layout shell is built and functional.
-- [ ] Dashboard route successfully retrieves session and basic mock/real metrics from the Postgres DB.
-- [ ] The dashboard offers obvious entry points into the student's workflow (uploading & chatting).
+### 3. Required Skills
+| Skill | Path | Why Required |
+|-------|------|--------------|
+| `ui-ux-pro-max` | `~/.kilocode/skills/ui-ux-pro-max/SKILL.md` | High-fidelity UI design patterns, responsive layouts, premium styling |
+| `nextjs-standards` | `~/.kilocode/skills/nextjs-standards/SKILL.md` | App Router patterns, Server Components, data fetching |
 
-## Expected Artifacts
-- `app/dashboard/layout.tsx`
-- `app/dashboard/page.tsx`
-- UI component files adhering to `ui-ux-pro-max` guidelines.
+### 4. Reference Documents
+| Document | Path | Purpose |
+|----------|------|---------|
+| FR-002 | `docs/issues/FR-002.md` | Dashboard requirements |
+| Core Architecture | `docs/features/CoreArchitecture.md` | Data models for display |
+| Coding Guidelines | `docs/Coding_Guidelines.md` | Project standards |
+| Dashboard Mockup | `docs/mockups/dashboard.html` | Visual reference |
+| Design System | `docs/design/design-system.html` | Colors, typography, components |
+
+---
+
+## 📋 Objective
+Establish the foundational responsive Dashboard layout where a user can view their tracked progress and interact with features.
+
+## 🎯 Scope
+
+**In Scope:**
+- Create overall application layout shell (header, sidebar/nav, main content area) for authenticated users
+- Build Dashboard overview page (`app/dashboard/page.tsx`)
+- Fetch user session and display personalized information (name, simulated mastery metrics) using Prisma
+- Implement clear call-to-action sections for uploading materials and accessing chat UI
+- Responsive design for web (mobile-first approach)
+
+**Out of Scope:**
+- Real-time analytics (future enhancement)
+- Topic mastery visualization (depends on RAG pipeline)
+- Settings page (separate task)
+
+## 📚 Context
+See FR-002 in `docs/issues/FR-002.md`. The design should prioritize visual excellence—do not settle for generic layout shells. It must feel premium and interactive while remaining fully responsive for web. Reference `docs/mockups/dashboard.html` for the intended visual direction.
+
+---
+
+## ✅ Definition of Done
+- [ ] Authenticated application layout shell is built and functional
+- [ ] Dashboard route successfully retrieves session and basic mock/real metrics from Postgres DB
+- [ ] Dashboard offers obvious entry points into student's workflow (uploading & chatting)
+- [ ] UI matches design system from `docs/mockups/dashboard.html`
+- [ ] Fully responsive on desktop and tablet viewports
+- [ ] Navigation works correctly between sections
+
+## 📁 Expected Artifacts
+| File | Purpose |
+|------|---------|
+| `app/dashboard/layout.tsx` | Dashboard layout shell with nav |
+| `app/dashboard/page.tsx` | Main dashboard overview |
+| `components/layout/Sidebar.tsx` | Navigation sidebar |
+| `components/layout/Header.tsx` | Top header with user menu |
+| `components/dashboard/StatsCard.tsx` | Metric display cards |
+| `components/dashboard/QuickActions.tsx` | CTA buttons |
+
+## 🚫 Constraints
+- ONLY perform the work outlined above
+- Do NOT implement real analytics (mock data is acceptable)
+- Do NOT deviate from the specified scope
+- Signal completion using `attempt_completion` tool
+- Create `03-dashboard-ui.result.md` file in `docs/tasks/orchestrator-sessions/orch-20260220-233751/completed/` when complete
+
+---
+
+*Generated by vibe-orchestrator mode*

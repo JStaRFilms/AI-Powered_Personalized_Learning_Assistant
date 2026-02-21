@@ -1,40 +1,89 @@
-## 🔧 Agent Setup (DO THIS FIRST)
+# Task: RAG Pipeline (FR-004)
 
-### Workflow to Follow
-> Load: `cat .agent/workflows/vibe-build.md`
-
-### Prime Agent Context
-> MANDATORY: Run `/vibe-primeAgent` first
-
-### Required Skills
-> | Skill | Path | Why |
-> |-------|------|-----|
-> | ai-sdk | `~/.gemini/antigravity/skills/ai-sdk/SKILL.md` | Provides exact patterns for `embedMany` and vector pipelines |
-
-### Check Additional Skills
-> Scan all known skills directories for more relevant skills
+**Session ID:** `orch-20260220-233751`
+**Source:** Orchestrator
+**Context:** Initial build phase for AI-Powered Personalized Learning Assistant MVP
+**Priority:** P0 (Critical - Core AI Feature)
+**Dependencies:** `01-scaffold-db.task.md`, `02-better-auth.task.md`, `04-material-uploads.task.md` (Must complete first)
+**Created At:** 2026-02-20T23:37:51Z
 
 ---
 
-## Objective
-Implement the Retrieval-Augmented Generation (RAG) backend engine. This entails processing raw document text into vectorized chunks and securely storing them in the Neon Postgres database.
+## 🔧 Agent Setup (DO THIS FIRST)
 
-## Scope
-- Create a `knowledge.service.ts` file in the back-end architecture.
-- Integrate LangChain (or alternative) recursive text splitting methodologies to chunk the parsed document data.
-- Utilize the Vercel AI SDK (e.g., `embedMany`) to transform textual chunks into vectors using a fast, low-cost embedding model.
-- Write the Prisma raw SQL query to insert vectors into Neon using the `pgvector` extension.
-- Create a semantic search function, `findSimilarContext(query: string)`, fetching nearest neighbor vectors directly from Neon Postgres.
+### 1. Prime Agent Context
+> **MANDATORY:** Run `/vibe-primeAgent` first to load project Coding Guidelines from `docs/Coding_Guidelines.md`
 
-## Context
-See FR-004 in `docs/issues/FR-004.md`. This pipeline is the heart of the learning assistant's academic accuracy. The raw SQL queries are inherently tricky due to Prisma's historically limited abstract support for the specialized `vector` type. Prioritize testing the embedding retrieval logic heavily. 
+### 2. Workflow to Follow
+> **Load:** `cat .agent/workflows/vibe-build.md`
+> 
+> This is the core implementation workflow. Follow its verification gates.
 
-## Definition of Done
-- [ ] Raw text can be correctly split into logical chunks with overlap.
-- [ ] Chunks are assigned vector embeddings via an API layer.
-- [ ] Vectors are securely inserted into the `DocumentEmbedding` Postgres table.
-- [ ] The `findSimilarContext` function correctly queries and returns the raw `contentChunk` of the most contextually relevant neighbors to a given string.
+### 3. Required Skills
+| Skill | Path | Why Required |
+|-------|------|--------------|
+| `ai-sdk` | `~/.kilocode/skills/ai-sdk/SKILL.md` | `embedMany` patterns, embedding models, vector operations |
+| `nextjs-standards` | `~/.kilocode/skills/nextjs-standards/SKILL.md` | Server Actions, API routes |
 
-## Expected Artifacts
-- `lib/knowledge.service.ts`
-- Associated testing/validation scripts.
+### 4. Reference Documents
+| Document | Path | Purpose |
+|----------|------|---------|
+| FR-004 | `docs/issues/FR-004.md` | RAG requirements |
+| Core Architecture | `docs/features/CoreArchitecture.md` | DocumentEmbedding model, vector schema |
+| Coding Guidelines | `docs/Coding_Guidelines.md` | Project standards |
+
+---
+
+## 📋 Objective
+Implement the Retrieval-Augmented Generation (RAG) backend engine. This entails processing raw document text into vectorized chunks and securely storing them in the Neon Postgres database with `pgvector` extension.
+
+## 🎯 Scope
+
+**In Scope:**
+- Create `lib/knowledge.service.ts` file in back-end architecture
+- Integrate LangChain recursive text splitting (or alternative) to chunk parsed document data
+- Utilize Vercel AI SDK `embedMany` to transform textual chunks into vectors using embedding model
+- Write Prisma raw SQL query to insert vectors into Neon using `pgvector` extension
+- Create semantic search function `findSimilarContext(query: string)` fetching nearest neighbor vectors
+- Enable `pgvector` extension in database schema
+- Create `DocumentEmbedding` model in Prisma schema
+
+**Out of Scope:**
+- Chat interface (Task 06)
+- Document re-processing/re-embedding
+- Embedding deletion/cleanup
+
+## 📚 Context
+See FR-004 in `docs/issues/FR-004.md`. This pipeline is the heart of the learning assistant's academic accuracy. The raw SQL queries are inherently tricky due to Prisma's historically limited abstract support for the specialized `vector` type. Prioritize testing the embedding retrieval logic heavily.
+
+**Embedding Model Recommendation:** Use `text-embedding-3-small` via OpenRouter for cost efficiency.
+
+---
+
+## ✅ Definition of Done
+- [ ] Raw text can be correctly split into logical chunks with overlap
+- [ ] Chunks are assigned vector embeddings via API layer
+- [ ] Vectors are securely inserted into `DocumentEmbedding` Postgres table
+- [ ] `findSimilarContext` function correctly queries and returns raw `contentChunk` of most contextually relevant neighbors
+- [ ] `pgvector` extension is enabled in database
+- [ ] Prisma schema includes `DocumentEmbedding` model with vector field
+
+## 📁 Expected Artifacts
+| File | Purpose |
+|------|---------|
+| `lib/knowledge.service.ts` | Core RAG service |
+| `lib/embeddings.ts` | Embedding generation utilities |
+| `lib/chunking.ts` | Text chunking utilities |
+| `prisma/schema.prisma` | Updated with DocumentEmbedding model |
+| `app/actions/processDocument.ts` | Trigger embedding on upload |
+
+## 🚫 Constraints
+- ONLY perform the work outlined above
+- Do NOT implement chat interface (that's Task 06)
+- Do NOT deviate from the specified scope
+- Signal completion using `attempt_completion` tool
+- Create `05-rag-pipeline.result.md` file in `docs/tasks/orchestrator-sessions/orch-20260220-233751/completed/` when complete
+
+---
+
+*Generated by vibe-orchestrator mode*

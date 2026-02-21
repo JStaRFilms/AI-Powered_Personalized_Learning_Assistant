@@ -30,10 +30,10 @@ Implement the Retrieval-Augmented Generation (RAG) backend engine. This entails 
 See FR-004 in `docs/issues/FR-004.md`. This pipeline is the heart of the learning assistant's academic accuracy. The raw SQL queries are inherently tricky due to Prisma's historically limited abstract support for the specialized `vector` type. Prioritize testing the embedding retrieval logic heavily. 
 
 ## Definition of Done
-- [ ] Raw text can be correctly split into logical chunks with overlap.
-- [ ] Chunks are assigned vector embeddings via an API layer.
-- [ ] Vectors are securely inserted into the `DocumentEmbedding` Postgres table.
-- [ ] The `findSimilarContext` function correctly queries and returns the raw `contentChunk` of the most contextually relevant neighbors to a given string.
+- [x] Raw text can be correctly split into logical chunks with overlap.
+- [x] Chunks are assigned vector embeddings via an API layer.
+- [x] Vectors are securely inserted into the `DocumentEmbedding` Postgres table.
+- [x] The `findSimilarContext` function correctly queries and returns the raw `contentChunk` of the most contextually relevant neighbors to a given string.
 
 ## Expected Artifacts
 - `lib/knowledge.service.ts`

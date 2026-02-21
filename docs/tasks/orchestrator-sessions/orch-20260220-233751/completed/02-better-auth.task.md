@@ -30,10 +30,10 @@ Implement robust authentication and session management using `better-auth`. Map 
 See FR-001 in `docs/issues/FR-001.md`. This is required before any user-specific data (like uploaded documents or topic mastery strings) can be tracked properly. Security and session cookie handling are paramount. Neon uses standard PostgreSQL connectors for Prisma.
 
 ## Definition of Done
-- [ ] Authentication works via Email/Password.
-- [ ] The Prisma schema incorporates the necessary tables required by `better-auth`.
-- [ ] Users can successfully log in, register, and sign out, resulting in a database session record.
-- [ ] Middleware correctly routes unauthenticated users away from protected areas.
+- [x] Authentication works via Email/Password.
+- [x] The Prisma schema incorporates the necessary tables required by `better-auth`.
+- [x] Users can successfully log in, register, and sign out, resulting in a database session record.
+- [x] Middleware correctly routes unauthenticated users away from protected areas.
 
 ## Expected Artifacts
 - `lib/auth.ts`

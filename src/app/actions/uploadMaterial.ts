@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { PDFParse } from "pdf-parse";
+import { revalidatePath } from "next/cache";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -51,6 +52,7 @@ export async function uploadMaterial(formData: FormData) {
             },
         });
 
+        revalidatePath('/dashboard/library');
         return { success: true, docId: doc.id };
     } catch (error) {
         console.error("Upload error:", error);

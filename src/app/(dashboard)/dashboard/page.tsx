@@ -1,19 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import {
-    GraduationCap,
-    BookOpen,
-    MessageSquare,
-    Upload,
-    Plus,
-    ArrowUpRight,
-    Target,
-    Zap
-} from 'lucide-react';
-import { StatsCard } from "@/components/dashboard/stats-card";
-import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default async function DashboardPage() {
@@ -21,149 +9,149 @@ export default async function DashboardPage() {
         headers: await headers(),
     });
 
-    if (!session) {
+    if (!session?.user) {
         redirect("/login");
     }
 
-    // Fetch recent documents for the user
+    const documentCount = await db.document.count({
+        where: { userId: session.user.id }
+    });
+
     const recentDocs = await db.document.findMany({
-        where: {
-            userId: session.user.id,
-        },
-        take: 3,
-        orderBy: {
-            createdAt: "desc",
-        },
+        where: { userId: session.user.id },
+        orderBy: { createdAt: 'desc' },
+        take: 3
     });
-
-    // Fetch recent conversations
-    const recentConversations = await db.conversation.findMany({
-        where: {
-            userId: session.user.id,
-        },
-        take: 2,
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
-
-    // Combine and format activity
-    const activityItems = [
-        ...recentDocs.map(doc => ({
-            id: doc.id,
-            type: 'document' as const,
-            title: doc.title,
-            timestamp: doc.createdAt.toLocaleDateString(),
-            href: `/dashboard/materials/${doc.id}`
-        })),
-        ...recentConversations.map(conv => ({
-            id: conv.id,
-            type: 'conversation' as const,
-            title: conv.title,
-            timestamp: conv.createdAt.toLocaleDateString(),
-            href: `/dashboard/chat/${conv.id}`
-        }))
-    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            {/* Welcome Header */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            {/* Top Bar */}
+            <header className="flex justify-between items-end mb-12">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                        Welcome back, {session.user.name?.split(' ')[0] || 'Scholar'}
-                    </h1>
-                    <p className="mt-1 text-zinc-500 dark:text-zinc-400">
-                        Ready to continue your learning journey?
-                    </p>
+                    <span className="text-xs uppercase tracking-widest text-surface-800 font-medium mb-1 block">Good Morning,</span>
+                    <h1 className="text-4xl font-serif text-surface-900 leading-none">{session.user.name || "Student"}</h1>
                 </div>
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/dashboard/materials/upload"
-                        className="flex h-11 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-5 text-sm font-semibold transition-all hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800/80"
-                    >
-                        <Upload className="h-4 w-4" />
-                        Upload
-                    </Link>
-                    <Link
-                        href="/dashboard/chat"
-                        className="flex h-11 items-center justify-center gap-2 rounded-xl bg-zinc-900 px-5 text-sm font-semibold text-white transition-all hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                    >
-                        <Plus className="h-4 w-4" />
-                        Start Chat
-                    </Link>
-                </div>
-            </div>
+                <Link href="/dashboard/library" className="bg-brand-900 text-surface-50 px-6 py-3 rounded-2xl font-medium shadow-float hover:bg-brand-800 transition-colors flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Upload Materials
+                </Link>
+            </header>
 
-            {/* Stats Grid */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <StatsCard
-                    title="Course Mastery"
-                    value="72%"
-                    description="Overall progress across all topics"
-                    icon={<Target className="h-5 w-5" />}
-                    trend={{ value: 12, isPositive: true }}
-                />
-                <StatsCard
-                    title="Topics Covered"
-                    value="24"
-                    description="Specific modules completed"
-                    icon={<BookOpen className="h-5 w-5" />}
-                    trend={{ value: 4, isPositive: true }}
-                />
-                <StatsCard
-                    title="Study Hours"
-                    value="18.5"
-                    description="Time spent learning this week"
-                    icon={<Zap className="h-5 w-5" />}
-                    trend={{ value: 2.1, isPositive: true }}
-                />
-                <StatsCard
-                    title="Recent Score"
-                    value="A-"
-                    description="Latest assessment performance"
-                    icon={<GraduationCap className="h-5 w-5" />}
-                />
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column: Focus & Stats */}
+                <div className="lg:col-span-2 space-y-8">
 
-            <div className="grid gap-8 lg:grid-cols-3">
-                {/* Recent Activity Section */}
-                <div className="lg:col-span-2">
-                    <RecentActivity items={activityItems} />
-                </div>
+                    {/* Resume Learning Banner */}
+                    <div className="glass p-8 rounded-3xl shadow-soft relative overflow-hidden flex items-center justify-between border-t border-white/60">
+                        <div className="absolute -right-16 -top-16 opacity-10">
+                            <svg className="w-64 h-64 text-brand-900" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                    d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                            </svg>
+                        </div>
 
-                {/* Quick Tips / Upgrade Card */}
-                <div className="space-y-6">
-                    <div className="rounded-2xl bg-zinc-900 p-6 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xl shadow-zinc-200/20 dark:shadow-none">
-                        <h3 className="text-lg font-bold tracking-tight">Level Up Your Learning</h3>
-                        <p className="mt-2 text-sm text-zinc-400 dark:text-zinc-500">
-                            Unlock personalized AI-generated quizzes and advanced topic mapping.
-                        </p>
-                        <button className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-bold text-zinc-900 transition-colors hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:bg-zinc-800">
-                            Upgrade to Plus
-                            <ArrowUpRight className="h-4 w-4" />
-                        </button>
-                    </div>
-
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900/50">
-                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">Study Goal</h3>
-                        <div className="mt-4 space-y-2">
-                            <div className="flex items-center justify-between text-sm">
-                                <span className="text-zinc-500">Weekly Target</span>
-                                <span className="font-medium text-zinc-900 dark:text-zinc-100">85%</span>
+                        <div className="z-10 w-full flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            <div>
+                                <span className="text-xs uppercase tracking-widest text-brand-700 font-semibold mb-2 block">Ready to Learn</span>
+                                <h2 className="text-2xl font-serif text-surface-900 mb-1">Start a Conversation</h2>
+                                <p className="text-sm text-surface-800 font-light">Ask your AI tutor questions based on your uploaded context.</p>
                             </div>
-                            <div className="h-2 w-full rounded-full bg-zinc-100 dark:bg-zinc-800">
-                                <div
-                                    className="h-full rounded-full bg-zinc-900 dark:bg-zinc-100"
-                                    style={{ width: '85%' }}
-                                />
-                            </div>
-                            <p className="text-xs text-zinc-400 dark:text-zinc-500 italic">
-                                You're just 2 hours away from your goal!
-                            </p>
+                            <Link href="/dashboard/chat" className="bg-surface-900 text-surface-50 px-6 py-3 rounded-2xl font-medium shrink-0 hover:bg-surface-800 transition-colors flex items-center gap-2">
+                                Open Chat
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
+                            </Link>
                         </div>
                     </div>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 gap-6">
+                        <div className="glass p-6 rounded-3xl shadow-soft">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                                <span className="text-sm text-surface-800 font-medium">Activity Streak</span>
+                            </div>
+                            <h4 className="text-3xl font-serif text-surface-900">3<span className="text-lg text-surface-400 font-sans ml-1"> Days</span></h4>
+                            <div className="w-full bg-surface-200 h-1.5 rounded-full mt-4 overflow-hidden">
+                                <div className="bg-brand-500 h-full w-[40%] rounded-full"></div>
+                            </div>
+                        </div>
+
+                        <div className="glass p-6 rounded-3xl shadow-soft">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <span className="text-sm text-surface-800 font-medium">Files Indexed</span>
+                            </div>
+                            <h4 className="text-3xl font-serif text-surface-900">{documentCount}</h4>
+                            <p className="text-xs text-surface-800 mt-4 font-light">Available for RAG context.</p>
+                        </div>
+                    </div>
+
                 </div>
+
+                {/* Right Column: Recent Activity & Uploads */}
+                <div className="space-y-8">
+                    <div className="glass p-6 rounded-3xl shadow-soft h-full flex flex-col">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-lg font-serif text-surface-900">Recent Materials</h3>
+                            <Link href="/dashboard/library" className="text-xs font-semibold uppercase tracking-wide text-brand-600 hover:text-brand-800">
+                                View All
+                            </Link>
+                        </div>
+
+                        <div className="space-y-4 flex-1">
+                            {recentDocs.length > 0 ? (
+                                recentDocs.map((doc) => (
+                                    <div key={doc.id} className="group flex items-center justify-between p-3 hover:bg-surface-50 rounded-2xl transition-colors cursor-pointer border border-transparent hover:border-surface-200">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                                    </path>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-surface-900 truncate w-32">{doc.title}</p>
+                                                <p className="text-xs text-surface-800 font-light">
+                                                    {new Date(doc.createdAt).toLocaleDateString()}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className="text-xs font-medium text-brand-700 bg-brand-50 px-2 py-1 rounded-md">Indexed</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-sm text-surface-500 text-center py-4">No materials uploaded yet.</p>
+                            )}
+                        </div>
+
+                        {/* Mini Drag & Drop Link */}
+                        <Link href="/dashboard/library" className="mt-4 border-2 border-dashed border-surface-300 rounded-2xl p-6 text-center hover:border-brand-400 hover:bg-brand-50/50 transition-colors block cursor-pointer">
+                            <svg className="w-6 h-6 mx-auto text-surface-800 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span className="text-xs font-medium text-surface-800 block">Go to Upload</span>
+                        </Link>
+
+                    </div>
+                </div>
+
             </div>
         </div>
     );

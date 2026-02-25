@@ -1,34 +1,58 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #faf9f6;
-  --color-foreground: #0b1616;
-  --color-border: #e2e8f0;
-  --color-ring: #0d9488;
-  
-  --color-primary: #0d9488;
-  --color-secondary: #0f766e;
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-300: #5eead4;
+  --color-brand-400: #2dd4bf;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
+  --color-brand-950: #042f2e;
+
+  --color-surface-50: #fdfbf7;
+  --color-surface-100: #f6f3eb;
+  --color-surface-200: #e8e2d2;
+  --color-surface-300: #d7cbb3;
+  --color-surface-800: #2c2a26;
+  --color-surface-900: #1a1917;
 
   /* Typography */
   --font-sans: "Inter", sans-serif;
   --font-serif: "Playfair Display", serif;
-}
 
-@theme .dark {
-  --color-background: #051919;
-  --color-foreground: #fdfbf7;
-  --color-border: #134e4a;
+  --shadow-soft: 0 10px 40px -10px rgba(4, 47, 46, 0.08);
+  --shadow-float: 0 20px 40px -10px rgba(20, 184, 166, 0.15);
 }
 
 @layer base {
-  * { 
-    @apply border-border; 
-  }
-  body { 
-    @apply bg-background text-foreground font-sans; 
+  body {
+    @apply bg-surface-50 text-surface-900 font-sans antialiased min-h-screen text-base;
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
+  }
+}
+
+@layer utilities {
+  .pattern-dots {
+    background-image: radial-gradient(var(--color-surface-300) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
   }
 }

@@ -2,21 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-    LayoutDashboard,
-    BookOpen,
-    MessageSquare,
-    Settings,
-    Menu,
-    X,
-    Search,
-    Bell,
-    User as UserIcon,
-    LogOut,
-    ChevronRight
-} from 'lucide-react';
-import { NavLink } from '@/components/dashboard/nav-link';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Menu, X } from 'lucide-react';
 
 export default function DashboardLayout({
     children,
@@ -24,115 +12,135 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const pathname = usePathname();
 
     const navigation = [
-        { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard /> },
-        { name: 'My Materials', href: '/dashboard/materials', icon: <BookOpen /> },
-        { name: 'AI Tutor', href: '/dashboard/chat', icon: <MessageSquare /> },
-        { name: 'Settings', href: '/dashboard/settings', icon: <Settings /> },
+        {
+            name: 'Dashboard',
+            href: '/dashboard',
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    </path>
+                </svg>
+            )
+        },
+        {
+            name: 'Library',
+            href: '/dashboard/library',
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                    </path>
+                </svg>
+            )
+        },
+        {
+            name: 'AI Tutor',
+            href: '/dashboard/chat',
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+                    </path>
+                </svg>
+            )
+        },
+        {
+            name: 'Analytics',
+            href: '/dashboard/analytics',
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 00-2-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+            )
+        }
     ];
 
     return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-black">
+        <div className="antialiased min-h-screen pattern-dots flex">
             {/* Mobile Sidebar Overlay */}
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 z-40 bg-zinc-950/20 backdrop-blur-sm lg:hidden"
+                    className="fixed inset-0 z-40 bg-surface-900/20 backdrop-blur-sm lg:hidden"
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}
 
-            {/* Sidebar */}
+            {/* Mobile Menu Button */}
+            <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-glass rounded-xl text-surface-800 shadow-soft border border-surface-200"
+            >
+                <Menu className="w-6 h-6" />
+            </button>
+
+            {/* Sidebar (Full width for normal, Icon-only for chat if needed, but going with normal for layout) */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 z-50 w-72 transform border-r border-zinc-200 bg-white transition-transform duration-300 ease-in-out dark:border-zinc-800 dark:bg-zinc-950 lg:translate-x-0 lg:static lg:inset-0",
+                "w-64 glass border-r border-surface-200 flex flex-col justify-between fixed h-full z-50 transition-transform duration-300 lg:translate-x-0",
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="flex h-full flex-col p-6">
+                <div>
                     {/* Logo */}
-                    <div className="flex items-center gap-3 px-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 dark:bg-zinc-100">
-                            <div className="h-5 w-5 rounded-sm bg-white dark:bg-zinc-900" />
-                        </div>
-                        <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                            Lumen
-                        </span>
+                    <div className="p-8 flex justify-between items-center">
+                        <Link href="/dashboard" className="text-2xl font-serif font-medium tracking-tight text-surface-900">
+                            Lumina<span className="text-brand-500 italic">.ai</span>
+                        </Link>
+                        <button className="lg:hidden text-surface-500 hover:text-surface-900" onClick={() => setIsSidebarOpen(false)}>
+                            <X className="w-5 h-5" />
+                        </button>
                     </div>
 
                     {/* Navigation */}
-                    <nav className="mt-10 flex-1 space-y-1">
-                        {navigation.map((item) => (
-                            <NavLink key={item.name} href={item.href} icon={item.icon}>
-                                {item.name}
-                            </NavLink>
-                        ))}
+                    <nav className="px-4 space-y-2">
+                        {navigation.map((item) => {
+                            const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard');
+                            return (
+                                <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={cn(
+                                        "flex items-center gap-3 px-4 py-3 rounded-2xl transition-colors",
+                                        isActive
+                                            ? "bg-brand-50 text-brand-700 font-medium shadow-inner"
+                                            : "text-surface-800 hover:bg-surface-100 hover:text-surface-900 font-light"
+                                    )}
+                                    onClick={() => setIsSidebarOpen(false)}
+                                >
+                                    {item.icon}
+                                    {item.name}
+                                </Link>
+                            )
+                        })}
                     </nav>
+                </div>
 
-                    {/* Bottom Profile section */}
-                    <div className="mt-auto pt-6 border-t border-zinc-100 dark:border-zinc-800">
-                        <button className="group flex w-full items-center gap-3 rounded-xl p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 transition-all duration-200">
-                            <div className="h-10 w-10 rounded-full border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 flex items-center justify-center overflow-hidden">
-                                <UserIcon className="h-6 w-6" />
-                            </div>
-                            <div className="flex-1 text-left">
-                                <p className="text-sm font-semibold truncate">My Account</p>
-                                <p className="text-xs truncate">Manage settings</p>
-                            </div>
-                            <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
-                        </button>
-                        <button className="mt-2 flex w-full items-center gap-3 rounded-xl p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-200">
-                            <LogOut className="h-5 w-5" />
-                            <span className="text-sm font-medium">Log out</span>
-                        </button>
+                {/* User Section */}
+                <div className="p-6 border-t border-surface-200">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-surface-200 flex items-center justify-center font-serif text-surface-900 border-2 border-surface-50">
+                            S
+                        </div>
+                        <div>
+                            <h5 className="text-sm font-medium text-surface-900">Student Name</h5>
+                            <Link href="/dashboard/settings" className="text-xs text-surface-800 hover:text-brand-600 transition-colors">
+                                Settings & Profile
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <div className="flex flex-1 flex-col lg:min-h-screen">
-                {/* Header */}
-                <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between border-b border-zinc-200 bg-white/80 px-4 backdrop-blur-md dark:border-zinc-800 dark:bg-black/80 lg:px-8">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setIsSidebarOpen(true)}
-                            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 lg:hidden"
-                        >
-                            <Menu className="h-6 w-6" />
-                        </button>
-
-                        <div className="relative hidden sm:block">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                            <input
-                                type="text"
-                                placeholder="Search resources..."
-                                className="h-10 w-64 rounded-xl border border-zinc-200 bg-zinc-50 pl-10 pr-4 text-sm transition-all focus:w-80 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900/50 dark:focus:border-zinc-100 dark:focus:ring-zinc-100"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <button className="relative rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800">
-                            <Bell className="h-5 w-5" />
-                            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-rose-500 border-2 border-white dark:border-black" />
-                        </button>
-                        <div className="h-8 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-2" />
-                        <div className="flex items-center gap-3 pl-2">
-                            {/* User Info Placeholder */}
-                            <div className="hidden text-right md:block">
-                                <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Student</p>
-                                <p className="text-xs text-zinc-500">Free Plan</p>
-                            </div>
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-zinc-200 to-zinc-400 dark:from-zinc-700 dark:to-zinc-900 border-2 border-white dark:border-zinc-800 shadow-sm" />
-                        </div>
-                    </div>
-                </header>
-
-                {/* Page Content */}
-                <main className="flex-1 overflow-y-auto p-4 lg:p-10">
-                    <div className="mx-auto max-w-7xl">
-                        {children}
-                    </div>
-                </main>
+            {/* Main Content wrapped dynamically */}
+            {/* If we're strictly full page with no margin for Chat, we can conditionally add ml-64 based on children, but let's standardise ml-64 for now and override in Chat if needed. */}
+            <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
+                {children}
             </div>
         </div>
     );
 }
+

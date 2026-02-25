@@ -17,10 +17,11 @@ export function ChatInterface({ conversationId = "default-chat", initialMessages
         body: { conversationId }
     }), [conversationId]);
 
-    const { messages, sendMessage, status } = useChat({
+    const { messages, append, status } = useChat({
         id: conversationId,
-        transport,
-        messages: initialMessages,
+        api: "/api/chat",
+        body: { conversationId },
+        initialMessages: initialMessages,
     });
 
     const [input, setInput] = useState("");
@@ -42,7 +43,7 @@ export function ChatInterface({ conversationId = "default-chat", initialMessages
 
         const content = input.trim();
         setInput("");
-        await sendMessage({ role: "user", parts: [{ type: "text", text: content }] });
+        await append({ role: "user", content: content });
     };
 
     return (
@@ -62,7 +63,7 @@ export function ChatInterface({ conversationId = "default-chat", initialMessages
                     </div>
                 ) : (
                     messages.map((m) => {
-                        const messageText = m.parts?.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('') || '';
+                        const messageText = m.content || m.parts?.filter((p: any) => p.type === 'text').map((p: any) => p.text).join('') || '';
 
                         return (
                             <div

@@ -22,7 +22,10 @@ let prisma: PrismaClient;
 // We use the Neon Driver Adapter universally to provide stable connections 
 // and Edge Runtime compatibility across all environments.
 if (!globalForPrisma.prisma) {
-    const connectionString = `${process.env.DATABASE_URL}`;
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+        throw new Error("DATABASE_URL is missing in environment variables.");
+    }
     const pool = new Pool({ connectionString });
     const adapter = new PrismaNeon(pool as any);
 

@@ -111,7 +111,7 @@ export async function processDocumentForRAG(documentId: string, rawText: string)
  * Find the most relevant context chunks for a user's query using vector similarity search.
  * Uses NVIDIA's free embedding model via OpenRouter for the query embedding.
  */
-export async function findSimilarContext(query: string, userId: string, limit: number = 5, documentId?: string): Promise<string[]> {
+export async function findSimilarContext(query: string, userId: string, limit: number = 5, documentId?: string): Promise<Array<{ content: string; source: string }>> {
     if (!query || query.trim().length === 0) {
         return [];
     }
@@ -121,11 +121,11 @@ export async function findSimilarContext(query: string, userId: string, limit: n
     const vectorString = `[${queryEmbedding.join(',')}]`;
 
     // 2. Perform vector similarity search, scoped to the current user's documents
-    let nearestNeighbors: Array<{ contentChunk: string; distance: number }>;
+    let nearestNeighbors: Array<{ contentChunk: string; distance: number; title: string }>;
 
     if (documentId) {
-        nearestNeighbors = await db.$queryRaw<Array<{ contentChunk: string; distance: number }>>`
-            SELECT de."contentChunk", de."embedding" <=> ${vectorString}::vector AS distance
+        nearestNeighbors = await db.$queryRaw<Array<{ contentChunk: string; distance: number; title: string }>>`
+            SELECT de."contentChunk", de."embedding" <=> ${vectorString}::vector AS distance, d.title
             FROM "DocumentEmbedding" de
             INNER JOIN "Document" d ON de."documentId" = d."id"
             WHERE d."userId" = ${userId} AND de."documentId" = ${documentId}
@@ -133,8 +133,8 @@ export async function findSimilarContext(query: string, userId: string, limit: n
             LIMIT ${limit}
         `;
     } else {
-        nearestNeighbors = await db.$queryRaw<Array<{ contentChunk: string; distance: number }>>`
-            SELECT de."contentChunk", de."embedding" <=> ${vectorString}::vector AS distance
+        nearestNeighbors = await db.$queryRaw<Array<{ contentChunk: string; distance: number; title: string }>>`
+            SELECT de."contentChunk", de."embedding" <=> ${vectorString}::vector AS distance, d.title
             FROM "DocumentEmbedding" de
             INNER JOIN "Document" d ON de."documentId" = d."id"
             WHERE d."userId" = ${userId}
@@ -143,5 +143,8 @@ export async function findSimilarContext(query: string, userId: string, limit: n
         `;
     }
 
-    return nearestNeighbors.map(n => n.contentChunk);
+    return nearestNeighbors.map(n => ({
+        content: n.contentChunk,
+        source: n.title
+    }));
 }

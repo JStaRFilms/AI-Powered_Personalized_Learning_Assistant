@@ -11,6 +11,8 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.31",
     "@ai-sdk/openai": "^3.0.33",
+    "@ai-sdk/provider": "^3.0.8",
+    "@ai-sdk/provider-utils": "^4.0.15",
     "@ai-sdk/react": "^3.0.101",
     "@better-fetch/fetch": "^1.1.21",
     "@hookform/resolvers": "^5.2.2",
@@ -19,8 +21,6 @@
     "@openrouter/ai-sdk-provider": "^2.2.3",
     "@prisma/adapter-neon": "^5.22.0",
     "@prisma/client": "^5.22.0",
-    "@ai-sdk/provider": "^3.0.8",
-    "@ai-sdk/provider-utils": "^4.0.15",
     "ai": "^6.0.99",
     "better-auth": "^1.4.18",
     "clsx": "^2.1.1",
@@ -30,6 +30,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
+    "react-markdown": "^10.1.0",
     "tailwind-merge": "^3.5.0",
     "ws": "^8.19.0",
     "zod": "^4.3.6"

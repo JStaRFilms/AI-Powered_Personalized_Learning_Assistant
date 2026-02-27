@@ -39,7 +39,9 @@ export async function POST(req: Request) {
         // Perform RAG Pipeline -> retrieve chunks from Neon Postgres
         // If a specific documentId is selected, filter to just that document
         const contextChunks = await findSimilarContext(latestQuery, session.user.id, 5, documentId);
-        const contextString = contextChunks.join("\n\n");
+
+        // Format the context string to include the source document title for each chunk
+        const contextString = contextChunks.map(chunk => `[Source Document: ${chunk.source}]\n${chunk.content}`).join("\n\n---\n\n");
 
         // Read user preferences (from Settings page toggles)
         const socraticMode = preferences?.socraticMode ?? true;
@@ -57,6 +59,20 @@ export async function POST(req: Request) {
 
         // Build adaptive system prompt
         let systemPrompt = `You are Lumina, a helpful and adaptive academic AI tutor.\n`;
+
+        // Formatting instructions
+        systemPrompt += `\n## FORMATTING RULES (VERY IMPORTANT)\n`;
+        systemPrompt += `- Write in a clear, conversational tone like a friendly tutor explaining to a student face-to-face.\n`;
+        systemPrompt += `- Use SHORT paragraphs (2-3 sentences max per paragraph). Leave blank lines between paragraphs for breathing room.\n`;
+        systemPrompt += `- NEVER write walls of text. Break up your response into digestible sections.\n`;
+        systemPrompt += `- Use **bold** for key terms and concepts when first introducing them.\n`;
+        systemPrompt += `- Use analogies and real-world examples to make concepts click.\n`;
+        systemPrompt += `- Use bullet points sparingly — only for lists of 3+ related items.\n`;
+        systemPrompt += `- Use headings (##) only when covering multiple distinct sub-topics in one response.\n`;
+        systemPrompt += `- End every response with a source reference placard in this exact format, citing the specific document(s) you used from the context:\n`;
+        systemPrompt += `---\n📚 *Source: [Insert Document Title Here]*\n`;
+        systemPrompt += `If the context was empty or you relied entirely on general knowledge, instead write:\n`;
+        systemPrompt += `---\n📚 *Source: General knowledge (no matching content found in your uploads)*\n\n`;
 
         // Curriculum strictness
         if (strictCurriculumMode) {

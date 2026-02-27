@@ -5,6 +5,7 @@ import { DefaultChatTransport } from "ai";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { clsx } from "clsx";
+import ReactMarkdown from "react-markdown";
 
 interface DocumentInfo {
     id: string;
@@ -231,8 +232,17 @@ export function ChatInterface({ conversationId = "default-chat", initialMessages
                                         ? "bg-surface-900 text-surface-50 rounded-tr-sm"
                                         : "bg-white/80 border border-surface-200 rounded-tl-sm text-surface-900"
                                 )}>
-                                    <div className="font-light leading-relaxed prose prose-sm max-w-none">
-                                        {messageText}
+                                    <div className={clsx(
+                                        "leading-relaxed max-w-none",
+                                        m.role === "assistant"
+                                            ? "prose prose-sm prose-p:my-3 prose-headings:mt-5 prose-headings:mb-2 prose-li:my-1 prose-hr:my-4 prose-hr:border-surface-200 prose-strong:text-brand-800 font-light"
+                                            : "font-light"
+                                    )}>
+                                        {m.role === "assistant" ? (
+                                            <ReactMarkdown>{messageText}</ReactMarkdown>
+                                        ) : (
+                                            messageText
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -241,8 +251,17 @@ export function ChatInterface({ conversationId = "default-chat", initialMessages
 
                     {error && (
                         <div className="flex justify-center mb-4">
-                            <span className="text-xs text-red-500 bg-red-50 border border-red-200 px-3 py-1 rounded-full">
-                                {error.message || "An error occurred generating the response."}
+                            <span className="text-xs text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded-xl shadow-sm text-center max-w-md">
+                                {(() => {
+                                    const errStr = error.message || "";
+                                    if (errStr.includes("RESOURCE_EXHAUSTED") || errStr.includes("429")) {
+                                        return "This AI model is currently busy or rate-limited. Please select a different model from the dropdown above to continue.";
+                                    }
+                                    if (errStr.includes("error")) {
+                                        return "The AI encountered an error processing your request. Please try again or switch to a different model.";
+                                    }
+                                    return errStr || "An error occurred generating the response.";
+                                })()}
                             </span>
                         </div>
                     )}

@@ -1,34 +1,78 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getCachedSession } from "@/lib/auth-server";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default async function DashboardPage() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user) {
         redirect("/login");
     }
 
-    const documentCount = await db.document.count({
-        where: { userId: session.user.id }
-    });
+    // Run all DB queries in parallel to avoid sequential network round-trips to Neon
+    const [documentCount, recentDocs, conversationDates, documentDates] = await Promise.all([
+        db.document.count({
+            where: { userId: session.user.id }
+        }),
+        db.document.findMany({
+            where: { userId: session.user.id },
+            orderBy: { createdAt: 'desc' },
+            take: 3,
+            select: { id: true, title: true, createdAt: true },
+        }),
+        db.conversation.findMany({
+            where: { userId: session.user.id },
+            select: { updatedAt: true },
+        }),
+        db.document.findMany({
+            where: { userId: session.user.id },
+            select: { createdAt: true },
+        }),
+    ]);
 
-    const recentDocs = await db.document.findMany({
-        where: { userId: session.user.id },
-        orderBy: { createdAt: 'desc' },
-        take: 3
-    });
+    const toDateStr = (d: Date) => d.toISOString().split('T')[0];
+    const activityDays = new Set([
+        ...conversationDates.map(c => toDateStr(c.updatedAt)),
+        ...documentDates.map(d => toDateStr(d.createdAt)),
+    ]);
+
+    let activityStreak = 0;
+    const today = new Date();
+    const todayStr = toDateStr(today);
+
+    // Allow streak to start from today or yesterday (forgiving)
+    let startOffset = 0;
+    if (!activityDays.has(todayStr)) {
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (activityDays.has(toDateStr(yesterday))) {
+            startOffset = 1;
+        }
+    }
+
+    for (let i = 0; i < 365; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - startOffset - i);
+        if (activityDays.has(toDateStr(checkDate))) {
+            activityStreak++;
+        } else {
+            break;
+        }
+    }
+
+    const streakPercent = Math.min(100, Math.round((activityStreak / 7) * 100));
+
+    // Dynamic greeting based on time of day
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
+        <div className="p-6 md:p-10 max-w-6xl mx-auto w-full space-y-8 animate-in fade-in duration-700">
             {/* Top Bar */}
             <header className="flex justify-between items-end mb-12">
                 <div>
-                    <span className="text-xs uppercase tracking-widest text-surface-800 font-medium mb-1 block">Good Morning,</span>
+                    <span className="text-xs uppercase tracking-widest text-surface-800 font-medium mb-1 block">{greeting},</span>
                     <h1 className="text-4xl font-serif text-surface-900 leading-none">{session.user.name || "Student"}</h1>
                 </div>
                 <Link href="/dashboard/library" className="bg-brand-900 text-surface-50 px-6 py-3 rounded-2xl font-medium shadow-float hover:bg-brand-800 transition-colors flex items-center gap-2">
@@ -80,9 +124,9 @@ export default async function DashboardPage() {
                                 </div>
                                 <span className="text-sm text-surface-800 font-medium">Activity Streak</span>
                             </div>
-                            <h4 className="text-3xl font-serif text-surface-900">3<span className="text-lg text-surface-400 font-sans ml-1"> Days</span></h4>
+                            <h4 className="text-3xl font-serif text-surface-900">{activityStreak}<span className="text-lg text-surface-400 font-sans ml-1"> {activityStreak === 1 ? 'Day' : 'Days'}</span></h4>
                             <div className="w-full bg-surface-200 h-1.5 rounded-full mt-4 overflow-hidden">
-                                <div className="bg-brand-500 h-full w-[40%] rounded-full"></div>
+                                <div className="bg-brand-500 h-full rounded-full transition-all duration-500" style={{ width: `${streakPercent}%` }}></div>
                             </div>
                         </div>
 

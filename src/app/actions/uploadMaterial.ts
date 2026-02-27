@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { PDFParse } from "pdf-parse";
 import { revalidatePath } from "next/cache";
+import { processDocumentForRAG } from "@/lib/knowledge.service";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -51,6 +52,17 @@ export async function uploadMaterial(formData: FormData) {
                 userId: session.user.id,
             },
         });
+
+        // Chunk the text and generate vector embeddings for RAG retrieval
+        try {
+            await processDocumentForRAG(doc.id, rawText);
+        } catch (embeddingError: any) {
+            console.error("=== EMBEDDING PIPELINE FAILED ===");
+            console.error("Error:", embeddingError?.message || embeddingError);
+            console.error("Stack:", embeddingError?.stack);
+            revalidatePath('/dashboard/library');
+            return { success: true, docId: doc.id, warning: `File saved but indexing failed: ${embeddingError?.message || 'Unknown error'}` };
+        }
 
         revalidatePath('/dashboard/library');
         return { success: true, docId: doc.id };

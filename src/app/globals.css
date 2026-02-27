@@ -20,9 +20,9 @@
   --color-surface-800: #2c2a26;
   --color-surface-900: #1a1917;
 
-  /* Typography */
-  --font-sans: "Inter", sans-serif;
-  --font-serif: "Playfair Display", serif;
+  /* Typography — references next/font/google CSS variables from layout.tsx */
+  --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-serif: var(--font-playfair), "Playfair Display", serif;
 
   --shadow-soft: 0 10px 40px -10px rgba(4, 47, 46, 0.08);
   --shadow-float: 0 20px 40px -10px rgba(20, 184, 166, 0.15);

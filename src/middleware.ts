@@ -1,14 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { auth } from "@/lib/auth";
 
 export default async function middleware(request: NextRequest) {
     try {
-        const response = await fetch(`${request.nextUrl.origin}/api/auth/get-session`, {
-            headers: {
-                cookie: request.headers.get("cookie") || "",
-            },
+        // Direct session access avoids internal HTTP round-trip latency (~2 seconds)
+        const session = await auth.api.getSession({
+            headers: request.headers,
         });
-
-        const session = response.ok ? await response.json() : null;
 
         const isProtectedRoute = request.nextUrl.pathname.startsWith("/dashboard") || request.nextUrl.pathname.startsWith("/chat");
         const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register");

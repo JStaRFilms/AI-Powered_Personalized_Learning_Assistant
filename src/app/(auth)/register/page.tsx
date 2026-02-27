@@ -32,10 +32,11 @@ export default function RegisterPage() {
     const onSubmit = async (data: RegisterFormValues) => {
         setError(null);
         try {
-            const result = await signUp.email({
+            const { data: session, error: authError } = await signUp.email({
                 email: data.email,
                 password: data.password,
                 name: data.name,
+                callbackURL: "/dashboard",
                 fetchOptions: {
                     onError(ctx) {
                         setError(ctx.error.message || "An error occurred during registration");
@@ -43,7 +44,7 @@ export default function RegisterPage() {
                 },
             });
 
-            if (result?.data) {
+            if (!authError && session) {
                 router.push("/dashboard");
                 router.refresh();
             }
@@ -53,118 +54,78 @@ export default function RegisterPage() {
     };
 
     return (
-        <div>
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-6 text-center">
-                Create an account
-            </h3>
+        <div className="space-y-8">
+            <div className="text-center">
+                <h1 className="text-2xl font-serif text-surface-900 mb-1">Create Account</h1>
+                <p className="text-sm text-surface-800 font-light">Join Lumina.ai for targeted learning and tutoring.</p>
+            </div>
 
-            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-                <div>
-                    <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
+            {/* Error Message */}
+            {error && (
+                <div className="bg-red-50 border border-red-100 p-4 rounded-2xl">
+                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                </div>
+            )}
+
+            <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+                <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-surface-800 ml-1 block">
                         Full Name
                     </label>
-                    <div className="mt-1">
-                        <input
-                            id="name"
-                            type="text"
-                            autoComplete="name"
-                            placeholder="John Doe"
-                            {...register("name")}
-                            className={`block w-full appearance-none rounded-md border px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm dark:bg-gray-800 dark:text-white ${errors.name ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                                }`}
-                        />
-                        {errors.name && (
-                            <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>
-                        )}
-                    </div>
+                    <input
+                        type="text"
+                        placeholder="John Doe"
+                        {...register("name")}
+                        className={`w-full bg-surface-50 border ${errors.name ? 'border-red-300 ring-1 ring-red-300' : 'border-surface-200'} text-surface-900 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-300 transition-all font-light placeholder-surface-400`}
+                    />
+                    {errors.name && <p className="text-[10px] text-red-500 ml-1 font-medium">{errors.name.message}</p>}
                 </div>
 
-                <div>
-                    <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
-                        Email address
+                <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-surface-800 ml-1 block">
+                        Email Address
                     </label>
-                    <div className="mt-1">
-                        <input
-                            id="email"
-                            type="email"
-                            autoComplete="email"
-                            placeholder="you@example.com"
-                            {...register("email")}
-                            className={`block w-full appearance-none rounded-md border px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm dark:bg-gray-800 dark:text-white ${errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                                }`}
-                        />
-                        {errors.email && (
-                            <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
-                        )}
-                    </div>
+                    <input
+                        type="email"
+                        placeholder="student@university.edu"
+                        {...register("email")}
+                        className={`w-full bg-surface-50 border ${errors.email ? 'border-red-300 ring-1 ring-red-300' : 'border-surface-200'} text-surface-900 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-300 transition-all font-light placeholder-surface-400`}
+                    />
+                    {errors.email && <p className="text-[10px] text-red-500 ml-1 font-medium">{errors.email.message}</p>}
                 </div>
 
-                <div>
-                    <label
-                        htmlFor="password"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >
+                <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-surface-800 ml-1 block">
                         Password
                     </label>
-                    <div className="mt-1">
-                        <input
-                            id="password"
-                            type="password"
-                            autoComplete="new-password"
-                            placeholder="••••••••"
-                            {...register("password")}
-                            className={`block w-full appearance-none rounded-md border px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm dark:bg-gray-800 dark:text-white ${errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                                }`}
-                        />
-                        {errors.password && (
-                            <p className="mt-2 text-sm text-red-600">
-                                {errors.password.message}
-                            </p>
-                        )}
-                    </div>
+                    <input
+                        type="password"
+                        placeholder="••••••••"
+                        {...register("password")}
+                        className={`w-full bg-surface-50 border ${errors.password ? 'border-red-300 ring-1 ring-red-300' : 'border-surface-200'} text-surface-900 rounded-2xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-300 transition-all font-light placeholder-surface-400`}
+                    />
+                    {errors.password && <p className="text-[10px] text-red-500 ml-1 font-medium">{errors.password.message}</p>}
                 </div>
 
-                {error && (
-                    <div className="bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-800 p-3 rounded-md">
-                        <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                    </div>
-                )}
-
-                <div>
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
-                    >
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Creating account...
-                            </>
-                        ) : (
-                            "Create account"
-                        )}
-                    </button>
-                </div>
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-brand-900 text-surface-50 px-6 py-3.5 rounded-2xl font-medium shadow-float hover:bg-brand-800 disabled:opacity-70 disabled:cursor-not-allowed transition-all mt-2 flex items-center justify-center gap-2"
+                >
+                    {isSubmitting ? (
+                        <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Creating account...
+                        </>
+                    ) : (
+                        "Start Learning Now"
+                    )}
+                </button>
             </form>
 
-            <div className="mt-6 text-center text-sm">
-                <span className="text-gray-600 dark:text-gray-400">
-                    Already have an account?{" "}
-                </span>
-                <Link
-                    href="/login"
-                    className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
-                >
-                    Sign in
-                </Link>
-            </div>
+            <p className="text-center text-sm text-surface-800 font-light pt-2">
+                Already have an account? <Link href="/login" className="font-medium text-brand-700 hover:text-brand-900 transition-colors">Sign in here.</Link>
+            </p>
         </div>
     );
 }

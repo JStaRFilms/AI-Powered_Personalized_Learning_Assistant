@@ -24,6 +24,7 @@ model User {
 
   documents     Document[]
   conversations Conversation[]
+  usage         UserUsage?
 }
 
 model Session {
@@ -84,7 +85,7 @@ model DocumentEmbedding {
   id           String   @id @default(cuid())
   documentId   String
   contentChunk String
-  embedding    Unsupported("vector(768)")
+  embedding    Unsupported("vector(2048)")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -101,6 +102,25 @@ model Conversation {
   messages  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model UserUsage {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  tokensUsed      Int      @default(0)
+  tokenLimit      Int      @default(100000) // Default free limit
+  lastTokenReset  DateTime @default(now())
+  
+  apiCallsCount   Int      @default(0)
+  apiLimit        Int      @default(100) // Default daily API call limit
+  lastApiReset    DateTime @default(now())
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([userId])
 }

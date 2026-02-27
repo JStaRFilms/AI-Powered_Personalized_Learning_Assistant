@@ -6,15 +6,17 @@ export default function AuthLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    Learning Assistant
-                </h2>
-            </div>
+        <div className="min-h-screen pattern-dots flex items-center justify-center p-4">
+            <div className="w-full max-w-md">
+                {/* Logo or App Name */}
+                <div className="text-center mb-10">
+                    <h2 className="text-4xl font-serif font-medium tracking-tight text-surface-900 inline-block">
+                        Lumina<span className="text-brand-500 italic">.ai</span>
+                    </h2>
+                    <p className="text-surface-800 mt-2 font-light text-sm">Targeted learning. Context-aware tutoring.</p>
+                </div>
 
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                <div className="glass p-10 rounded-3xl shadow-float border-t border-white/60">
                     {children}
                 </div>
             </div>

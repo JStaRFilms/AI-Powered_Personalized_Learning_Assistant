@@ -1,18 +1,52 @@
-import { embedMany } from "ai";
-import { openai } from "@ai-sdk/openai";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { db } from "@/lib/db";
 import crypto from "crypto";
 
+const EMBED_MODEL = "nvidia/llama-nemotron-embed-vl-1b-v2:free";
+const EMBED_API = "https://openrouter.ai/api/v1/embeddings";
+const BATCH_SIZE = 50; // OpenRouter is generous, but keep batches manageable
+
 /**
- * Process raw document text into vectorized chunks and securely store them in the Neon Postgres database.
- * @param documentId The ID of the document record in the database
- * @param rawText The raw text content of the document
+ * Call OpenRouter's OpenAI-compatible embedding endpoint.
+ * Returns an array of embedding vectors for the given input texts.
+ */
+async function getEmbeddings(texts: string[]): Promise<number[][]> {
+    const apiKey = process.env.OPENROUTER_API_KEY;
+    if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set");
+
+    const res = await fetch(EMBED_API, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            model: EMBED_MODEL,
+            input: texts,
+        }),
+    });
+
+    if (!res.ok) {
+        const errorBody = await res.text();
+        throw new Error(`Embedding API error (${res.status}): ${errorBody}`);
+    }
+
+    const data = await res.json();
+    // Sort by index to ensure order matches input order
+    const sorted = data.data.sort((a: any, b: any) => a.index - b.index);
+    return sorted.map((d: any) => d.embedding);
+}
+
+/**
+ * Process raw document text into vectorized chunks and store them in Neon Postgres.
+ * Uses NVIDIA's free embedding model via OpenRouter.
  */
 export async function processDocumentForRAG(documentId: string, rawText: string) {
     if (!rawText || rawText.trim().length === 0) {
         throw new Error("Document text is empty");
     }
+
+    console.log(`[RAG] Starting embedding pipeline for document ${documentId} (${rawText.length} chars)`);
 
     // 1. Chunk the text
     const splitter = new RecursiveCharacterTextSplitter({
@@ -20,80 +54,94 @@ export async function processDocumentForRAG(documentId: string, rawText: string)
         chunkOverlap: 200,
     });
 
-    // createDocuments returns Langchain Document objects
     const chunks = await splitter.createDocuments([rawText]);
     const chunkTexts = chunks.map(c => c.pageContent);
+    console.log(`[RAG] Split into ${chunkTexts.length} chunks`);
 
     if (chunkTexts.length === 0) {
         return { success: true, chunksCount: 0 };
     }
 
-    // 2. Embed the chunks
-    // Using Vercel AI SDK with OpenAI's text-embedding-3-small (1536 dims)
-    const { embeddings } = await embedMany({
-        model: openai.embedding('text-embedding-3-small'),
-        values: chunkTexts,
-    });
+    // 2. Embed the chunks in batches via OpenRouter (NVIDIA free model)
+    const allEmbeddings: number[][] = [];
+    const totalBatches = Math.ceil(chunkTexts.length / BATCH_SIZE);
+    console.log(`[RAG] Generating embeddings via ${EMBED_MODEL} (${totalBatches} batches)...`);
 
-    // 3. Store in Postgres using raw SQL due to pgvector Prisma limitations
-    // We insert chunks sequentially or in a transaction
+    for (let i = 0; i < chunkTexts.length; i += BATCH_SIZE) {
+        const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+        const batch = chunkTexts.slice(i, i + BATCH_SIZE);
+
+        const batchEmbeddings = await getEmbeddings(batch);
+        allEmbeddings.push(...batchEmbeddings);
+        console.log(`[RAG] Batch ${batchNum}/${totalBatches}: embedded ${batch.length} chunks ✓`);
+
+        // Small delay between batches to be respectful of rate limits
+        if (i + BATCH_SIZE < chunkTexts.length) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    }
+    console.log(`[RAG] Generated ${allEmbeddings.length} total embeddings (dim=${allEmbeddings[0]?.length})`);
+
+    // 3. Store in Postgres using raw SQL (pgvector)
+    let insertedCount = 0;
     for (let i = 0; i < chunks.length; i++) {
         const text = chunkTexts[i];
-        const embedding = embeddings[i];
+        const embedding = allEmbeddings[i];
 
-        // Format embedding for pgvector: '[0.1, 0.2, ...]'
         const vectorString = `[${embedding.join(',')}]`;
         const newId = crypto.randomUUID();
 
-        await db.$executeRaw`
-            INSERT INTO "DocumentEmbedding" ("id", "documentId", "contentChunk", "embedding", "createdAt", "updatedAt")
-            VALUES (${newId}, ${documentId}, ${text}, ${vectorString}::vector, NOW(), NOW())
-        `;
+        try {
+            await db.$executeRaw`
+                INSERT INTO "DocumentEmbedding" ("id", "documentId", "contentChunk", "embedding", "createdAt", "updatedAt")
+                VALUES (${newId}, ${documentId}, ${text}, ${vectorString}::vector, NOW(), NOW())
+            `;
+            insertedCount++;
+        } catch (insertErr) {
+            console.error(`[RAG] Failed to insert chunk ${i}:`, insertErr);
+            throw insertErr;
+        }
     }
 
+    console.log(`[RAG] Successfully inserted ${insertedCount}/${chunks.length} embeddings`);
     return { success: true, chunksCount: chunks.length };
 }
 
 /**
- * Fetch nearest neighbor vectors directly from Neon Postgres.
- * @param query The user's search query
- * @param limit The maximum number of relevant chunks to return
- * @param documentId Optional. Filter by specific document ID
+ * Find the most relevant context chunks for a user's query using vector similarity search.
+ * Uses NVIDIA's free embedding model via OpenRouter for the query embedding.
  */
-export async function findSimilarContext(query: string, limit: number = 5, documentId?: string): Promise<string[]> {
+export async function findSimilarContext(query: string, userId: string, limit: number = 5, documentId?: string): Promise<string[]> {
     if (!query || query.trim().length === 0) {
         return [];
     }
 
     // 1. Embed the search query
-    const { embeddings } = await embedMany({
-        model: openai.embedding('text-embedding-3-small'),
-        values: [query],
-    });
-
-    const queryEmbedding = embeddings[0];
+    const [queryEmbedding] = await getEmbeddings([query]);
     const vectorString = `[${queryEmbedding.join(',')}]`;
 
-    // 2. Perform vector similarity search using nearest neighbor (cosine distance `<=>`)
+    // 2. Perform vector similarity search, scoped to the current user's documents
     let nearestNeighbors: Array<{ contentChunk: string; distance: number }>;
 
     if (documentId) {
         nearestNeighbors = await db.$queryRaw<Array<{ contentChunk: string; distance: number }>>`
-            SELECT "contentChunk", "embedding" <=> ${vectorString}::vector AS distance
-            FROM "DocumentEmbedding"
-            WHERE "documentId" = ${documentId}
+            SELECT de."contentChunk", de."embedding" <=> ${vectorString}::vector AS distance
+            FROM "DocumentEmbedding" de
+            INNER JOIN "Document" d ON de."documentId" = d."id"
+            WHERE d."userId" = ${userId} AND de."documentId" = ${documentId}
             ORDER BY distance ASC
             LIMIT ${limit}
         `;
     } else {
         nearestNeighbors = await db.$queryRaw<Array<{ contentChunk: string; distance: number }>>`
-            SELECT "contentChunk", "embedding" <=> ${vectorString}::vector AS distance
-            FROM "DocumentEmbedding"
+            SELECT de."contentChunk", de."embedding" <=> ${vectorString}::vector AS distance
+            FROM "DocumentEmbedding" de
+            INNER JOIN "Document" d ON de."documentId" = d."id"
+            WHERE d."userId" = ${userId}
             ORDER BY distance ASC
             LIMIT ${limit}
         `;
     }
 
-    // Return the raw content chunks most relevant to the query
     return nearestNeighbors.map(n => n.contentChunk);
 }

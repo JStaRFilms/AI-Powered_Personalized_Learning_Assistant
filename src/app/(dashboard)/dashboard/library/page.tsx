@@ -1,13 +1,11 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getCachedSession } from "@/lib/auth-server";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { FileUploader } from "@/components/dashboard/file-uploader";
+import { DeleteDocButton } from "@/components/dashboard/delete-doc-button";
 
 export default async function LibraryPage() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user) {
         redirect("/login");
@@ -16,10 +14,11 @@ export default async function LibraryPage() {
     const documents = await db.document.findMany({
         where: { userId: session.user.id },
         orderBy: { createdAt: 'desc' },
+        select: { id: true, title: true, createdAt: true },
     });
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
+        <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-10 animate-in fade-in duration-700">
             <header className="flex justify-between items-end mb-8">
                 <div>
                     <span className="text-xs uppercase tracking-widest text-surface-800 font-medium mb-1 block">
@@ -76,6 +75,7 @@ export default async function LibraryPage() {
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${doc.title.endsWith('.pdf') ? 'bg-red-50 text-red-500' : 'bg-surface-200 text-surface-700'}`}>
                                     <span className="font-bold text-xs">{doc.title.split('.').pop()?.toUpperCase() || 'TXT'}</span>
                                 </div>
+                                <DeleteDocButton documentId={doc.id} />
                             </div>
                             <div className="flex-1">
                                 <h4 className="font-medium text-surface-900 line-clamp-2 leading-tight">{doc.title}</h4>
